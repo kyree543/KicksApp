@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kicks For You</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .app-container {
+            background-color: #ff0000; /* Red background as per image */
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            width: 100%;
+            max-width: 400px; /* Adjust max-width for mobile-first design */
+            height: 800px; /* Fixed height for consistent look as per image */
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        .page {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            transition: transform 0.5s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start; /* Align items to start for scrollable content */
+            align-items: center;
+            padding: 1.5rem;
+            box-sizing: border-box;
+            background-color: #ff0000; /* Red background for all pages */
+            color: white;
+            overflow-y: auto; /* Enable vertical scrolling for content */
+        }
+        .page.hidden {
+            transform: translateX(100%);
+            display: none; /* Hide the page completely when not active */
+        }
+        .page.active {
+            transform: translateX(0);
+            display: flex; /* Show the page when active */
+        }
+        .input-field {
+            background-color: white;
+            color: black;
+            border-radius: 0.5rem;
+            padding: 0.75rem 1rem;
+            width: 100%;
+            margin-bottom: 1rem;
+            border: none;
+        }
+        .btn {
+            background-color: #a00000; /* Darker red for buttons */
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            text-align: center;
+            width: 100%;
+            max-width: 200px;
+        }
+        .btn:hover {
+            background-color: #800000;
+        }
+        .logo-circle {
+            background-color: white;
+            border-radius: 50%;
+            width: 120px;
+            height: 120px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .logo-circle svg {
+            width: 80px;
+            height: 80px;
+            fill: #ff0000;
+        }
+        .grid-item {
+            background-color: white;
+            color: black;
+            border-radius: 0.75rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 0.5rem;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            text-align: center;
+            overflow: hidden; /* Ensure image fits */
+            height: 100%; /* Make sure grid items take full height of their grid cell */
+        }
+        .grid-item:hover {
+            transform: translateY(-3px);
+        }
+        .grid-item img {
+            width: 100%;
+            height: 80%; /* Adjust height to make space for text */
+            object-fit: cover;
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .grid-item span {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #333;
+        }
+        .search-grid, .style-grid, .shoes-gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            width: 100%;
+            max-width: 300px; /* Adjust for better layout */
+            margin-bottom: 1.5rem;
+        }
+        .shoes-gallery-grid {
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); /* Responsive grid for images */
+            max-width: 350px; /* Wider for more images */
+            margin-top: 1.5rem;
+        }
+        .shoes-gallery-grid .grid-item {
+            padding: 0.25rem;
+            height: 150px; /* Fixed height for gallery items */
+        }
+        .shoes-gallery-grid .grid-item img {
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
+            border-radius: 0.5rem;
+        }
+        .search-input-container {
+            width: 100%;
+            max-width: 300px;
+            margin-top: 1.5rem;
+        }
+        .back-button {
+            position: absolute;
+            top: 1.5rem;
+            left: 1.5rem;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 10;
+        }
+        .message-box {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            z-index: 1000;
+            display: none;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        .message-box button {
+            background-color: #a00000;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+            cursor: pointer;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Login Page -->
+        <div id="login-page" class="page active">
+            <div class="logo-circle">
+                <!-- SVG for shoe icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M0 80V229.5c0 17.2 8.8 33.2 23.2 42.4L160 352V480c0 17.7 14.3 32 32 32s32-14.3 32-32V352l128-80V480c0 17.7 14.3 32 32 32s32-14.3 32-32V272l128-80V480c0 17.7 14.3 32 32 32s32-14.3 32-32V192 80c0-26.5-21.5-48-48-48H48C21.5 32 0 53.5 0 80zM48 96H528c8.8 0 16 7.2 16 16s-7.2 16-16 16H48c-8.8 0-16-7.2-16-16s7.2-16 16-16z"/></svg>
+            </div>
+            <h1 class="text-3xl font-bold mb-2">KICKS FOR YOU</h1>
+            <p class="text-lg mb-8">Welcome back to kicks for you</p>
+            <input type="email" id="email-login" placeholder="Email address" class="input-field">
+            <input type="password" id="password-login" placeholder="Password" class="input-field">
+            <a href="#" class="text-white text-sm mb-6 self-start">Forgot password?</a>
+            <button class="btn" onclick="login()">Login</button>
+        </div>
+
+        <!-- Home Page -->
+        <div id="home-page" class="page hidden">
+            <button class="back-button" onclick="showPage('login-page')">&#8592;</button>
+            <div class="logo-circle">
+                <!-- SVG for shoe icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M0 80V229.5c0 17.2 8.8 33.2 23.2 42.4L160 352V480c0 17.7 14.3 32 32 32s32-14.3 32-32V352l128-80V480c0 17.7 14.3 32 32 32s32-14.3 32-32V272l128-80V480c0 17.7 14.3 32 32 32s32-14.3 32-32V192 80c0-26.5-21.5-48-48-48H48C21.5 32 0 53.5 0 80zM48 96H528c8.8 0 16 7.2 16 16s-7.2 16-16 16H48c-8.8 0-16-7.2-16-16s7.2-16 16-16z"/></svg>
+            </div>
+            <h1 class="text-3xl font-bold mb-8">KICKS FOR YOU</h1>
+            <button class="btn mb-4" onclick="showPage('search-page')">Search Clothing & Shoes</button>
+            <button class="btn" onclick="showPage('styles-page')">Customize Your Style</button>
+        </div>
+
+        <!-- Search Page -->
+        <div id="search-page" class="page hidden">
+            <button class="back-button" onclick="showPage('home-page')">&#8592;</button>
+            <h2 class="text-2xl font-bold mb-6">Explore Products</h2>
+            <div class="search-grid">
+                <div class="grid-item" onclick="showPage('shoes-explore-page')">
+                    <img src="https://placehold.co/150x150/ffffff/000000?text=Shoes" alt="Shoes">
+                    <span>shoes</span>
+                </div>
+                <div class="grid-item">
+                    <img src="https://placehold.co/150x150/ffffff/000000?text=Clothes" alt="Clothes">
+                    <span>clothes</span>
+                </div>
+                <div class="grid-item">
+                    <img src="https://placehold.co/150x150/ffffff/000000?text=Shop+All" alt="Shop All">
+                    <span>shop all</span>
+                </div>
+                <div class="grid-item">
+                    <img src="https://placehold.co/150x150/ffffff/000000?text=Bags" alt="Bags">
+                    <span>bags</span>
+                </div>
+            </div>
+            <div class="search-input-container">
+                <input type="text" id="search-input" placeholder="Search" class="input-field mb-4">
+                <button class="btn" onclick="performSearch()">Search</button>
+            </div>
+        </div>
+
+        <!-- Shoes Explore Page -->
+        <div id="shoes-explore-page" class="page hidden">
+            <button class="back-button" onclick="showPage('search-page')">&#8592;</button>
+            <h2 class="text-2xl font-bold mb-6">Explore Shoes</h2>
+            <div class="search-grid">
+                <div class="grid-item" onclick="showPage('sneakers-page')">
+                    <img src="https://images.unsplash.com/photo-1552066343-f5419999126d?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" onerror="this.onerror=null;this.src='https://placehold.co/150x150/ffffff/000000?text=Sneakers';" alt="Sneakers">
+                    <span>Sneakers</span>
+                </div>
+                <div class="grid-item" onclick="showPage('boots-page')">
+                    <img src="https://images.unsplash.com/photo-1603598506253-33365922756d?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" onerror="this.onerror=null;this.src='https://placehold.co/150x150/ffffff/000000?text=Boots';" alt="Boots">
+                    <span>Boots</span>
+                </div>
+                <div class="grid-item" onclick="showPage('sandals-page')">
+                    <img src="https://images.unsplash.com/photo-1602330030064-9462208a044b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" onerror="this.onerror=null;this.src='https://placehold.co/150x150/ffffff/000000?text=Sandals';" alt="Sandals">
+                    <span>Sandals</span>
+                </div>
+                <div class="grid-item" onclick="showPage('dress-shoes-page')">
+                    <img src="https://images.unsplash.com/photo-1543163521-1bf539c55dd2?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" onerror="this.onerror=null;this.src='https://placehold.co/150x150/ffffff/000000?text=Dress+Shoes';" alt="Dress Shoes">
+                    <span>Dress Shoes</span>
+                </div>
+            </div>
+            <div class="search-input-container">
+                <input type="text" id="shoes-search-input" placeholder="Search Shoes" class="input-field mb-4">
+                <button class="btn" onclick="performShoesSearch()">Search Shoes</button>
+            </div>
+        </div>
+
+        <!-- Sneakers Page -->
+        <div id="sneakers-page" class="page hidden">
+            <button class="back-button" onclick="showPage('shoes-explore-page')">&#8592;</button>
+            <h2 class="text-2xl font-bold mb-6">Sneakers</h2>
+            <div class="shoes-gallery-grid">
+                <!-- Real images for Sneakers -->
+                <div class="grid-item"><img src="https://images.unsplash.com/photo-1552066343-f5419999126d?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" onerror="this.onerror=null;this.src='https://placehold.co/150x150/ffffff/000000?text=Sneaker+1';" alt="Sneaker 1"></div>
+                <div class="grid-item"><img src="https://images.unsplash.com/photo-1595950653106-6c9ebd614d5a?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" onerror="this.onerror=null;this.src='https://placehold.co/150x150/ffffff/000000?text=Sneaker+2';" alt="Sneaker 2"></div>
+                <div class="grid-item"><img src="https://images.unsplash.com/photo-1588361861042-fde11599971c?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" onerror="this.onerror=null;this.src='https://placehold.co/150x150/ffffff/000000?text=Sneaker+3';" alt="Sneaker 3"></div>
+                <div class="grid-item"><img src="https://images.unsplash.com/photo-1560769629-9fcd0caccbb1?q=80&w=2865&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" onerror="this.onerror=null;this.src='https://placehold.co/150x150/ffffff/000000?text=Sneaker+4';" alt="Sneaker 4"></div>
+                <div class="grid-item"><img src="https://images.unsplash.com/photo-1579339396263-0f72782e3077?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" onerror="this.onerror=null;this.src='https://placehold.co/150x150/ffffff/000000?text=Sneaker+5';" alt="Sneaker 5"></div>
+                <div class="grid-item"><img src="https://images.unsplash.com/photo-1518049362265-d5b2a6467632?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" onerror="this.onerror=null;this.src='https://placehold.co/150x150/ffffff/000000?text=Sneaker+6';" alt="Sneaker 6"></div>
+                <div class="grid-item"><img src="https://images.unsplash.com/photo-1597045566677-80ad95521d80?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" onerror="this.onerror=null;this.src='https://placehold.co/150x150/ffffff/000000?text=Sneaker+7';" alt="Sneaker 7"></div>
+                <div class="grid-item"><img src="https://images.unsplash.com/photo-1551103782-8617ac643356?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" onerror="this.onerror=null;this.src='https://placehold.co/150x150/ffffff/000000?text=Sneaker+8';" alt="Sneaker 8"></div>
+                <div class="grid-item"><img src="https://images.unsplash.com/photo-1579298245158-33e8225919d5?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" onerror="this.onerror=null;this.src='https://placehold.co/150x150/ffffff/000000?text=Sneaker+9';" alt="Sneaker 9"></div>
+                <div class="grid-item"><img src="https://images.unsplash.com/photo-1550399429-f0a719999b70?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" onerror="this.onerror=null;this.src='https://placehold.co/150x150/ffffff/000000?text=Sneaker+10';" alt="Sneaker 10"></div>
+                <div class="grid-item"><img src="https://images.unsplash.com/photo-1514989940717-856b8321505c?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" onerror="this.onerror=null;this.src='https://placehold.co/150x150/ffffff/000000?text=Sneaker+11';" alt="Sneaker 11"></div>
+                <div class="grid-item"><img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" onerror="this.onerror=null;this.src='https://placehold.co/150x150/ffffff/000000?text=Sneaker+12';" alt="Sneaker 12"></div>
+            </div>
+        </div>
+
+        <!-- Boots Page -->
+        <div id="boots-page" class="page hidden">
+            <button class="back-button" onclick="showPage('shoes-explore-page')">&#8592;</button>
+            <h2 class="text-2xl font-bold mb-6">Boots</h2>
+            <div class="shoes-gallery-grid">
+                <!-- Real images for Boots -->
+                <div class="grid-item"><img src="https://images.unsplash.com/photo-1603598506253-33365922756d?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" onerror="this.onerror=null;this.src='https://placehold.co/150x150/ffffff/000000?text=Boot+1';" alt="Boot 1"></div>
+                <div class="grid-item"><img src="https://images.unsplash.com/photo-1603598506253-33365922756d?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" onerror="this.onerror=null;this.src='https://placehold.co/150x150/ffffff/000000?text=Boot+2';" alt="Boot 2"></div>
+                <div class="grid-item"><img src="https://images.unsplash.com/photo-1603598506253-33365922756d?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" onerror="this.onerror=null;this.src='https://placehold.co/150x150/ffffff/000000?text=Boot+3';" alt="Boot 3"></div>
+                <div class="grid-item"><img src="https://images.unsplash.com/photo-1603598506253-33365922756d?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" onerror="this.onerror=null;this.src='https://placehold.co/150x150/ffffff/000000?text=Boot+4';" alt="Boot 4"></div>
+                <div class="grid-item"><img src="https://images.unsplash.com/photo-1603598506253-33365922756d?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" onerror="this.onerror=null;this.src='https://placehold.co/150x150/ffffff/000000?text=Boot+5';" alt="Boot 5"></div>
+                <div class="grid-item"><img src="https://images.unsplash.com/photo-1603598506253-33365922756d?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" onerror="this.onerror=null;this.src='https://placehold.co/150x150/ffffff/000000?text=Boot+6';" alt="Boot 6"></div>
+                <div class="grid-item"><img src="https://images.unsplash.com/photo-1603598506253-33365922756d?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" onerror="this.onerror=null;this.src='https://placehold.co/150x150/ffffff/000000?text=Boot+7';" alt="Boot 7"></div>
+                <div class="grid-item"><img src="https://images.unsplash.com/photo-1603598506253-33365922756d?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" onerror="this.onerror=null;this.src='https://placehold.co/150x150/ffffff/000000?text=Boot+8';" alt="Boot 8"></div>
+                <div class="grid-item"><img src="https://images.unsplash.com/photo-1603598506253-33365922756d?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" onerror="this.onerror=null;this.src='https://placehold.co/150x150/ffffff/000000?text=Boot+9';" alt="Boot 9"></div>
+                <div class="grid-item"><img src="https://images.unsplash.com/photo-1603598506253-33365922756d?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" onerror="this.onerror=null;this.src='https://placehold.co/150x150/ffffff/000000?text=Boot+10';" alt="Boot 10"></div>
+                <div class="grid-item"><img src="https://images.unsplash.com/photo-1603598506253-33365922756d?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" onerror="this.onerror=null;this.src='https://placehold.co/150x150/ffffff/000000?text=Boot+11';" alt="Boot 11"></div>
+                <div class="grid-item"><img src="https://images.unsplash.com/photo-1603598506253-33365922756d?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" onerror="this.onerror=null;this.src='https://placehold.co/150x150/ffffff/000000?text=Boot+12';" alt="Boot 12"></div>
+            </div>
+        </div>
+
+        <!-- Sandals Page -->
+        <div id="sandals-page" class="page hidden">
+            <button class="back-button" onclick="showPage('shoes-explore-page')">&#8592;</button>
+            <h2 class="text-2xl font-bold mb-6">Sandals</h2>
+            <div class="shoes-gallery-grid">
+                <!-- Real images for Sandals -->
+                <div class="grid-item"><img src="https://images.unsplash.com/photo-1602330030064-9462208a044b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" onerror="this.onerror=null;this.src='https://placehold.co/150x150/ffffff/000000?text=Sandal+1';" alt="Sandal 1"></div>
+                <div class="grid-item"><img src="https://images.unsplash.com/photo-1602330030064-9462208a044b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" onerror="this.onerror=null;this.src='https://placehold.co/150x150/ffffff/000000?text=Sandal+2';" alt="Sandal 2"></div>
+                <div class="grid-item"><img src="https://images.unsplash.com/photo-1602330030064-9462208a044b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" onerror="this.onerror=null;this.src='https://placehold.co/150x150/ffffff/000000?text=Sandal+3';" alt="Sandal 3"></div>
+                <div class="grid-item"><img src="https://images.unsplash.com/photo-1602330030064-9462208a044b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" onerror="this.onerror=null;this.src='https://placehold.co/150x150/ffffff/000000?text=Sandal+4';" alt="Sandal 4"></div>
+                <div class="grid-item"><img src="https://images.unsplash.com/photo-1602330030064-9462208a044b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" onerror="this.onerror=null;this.src='https://placehold.co/150x150/ffffff/000000?text=Sandal+5';" alt="Sandal 5"></div>
+                <div class="grid-item"><img src="https://images.unsplash.com/photo-1602330030064-9462208a044b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" onerror="this.onerror=null;this.src='https://placehold.co/150x150/ffffff/000000?text=Sandal+6';" alt="Sandal 6"></div>
+                <div class="grid-item"><img src="https://images.unsplash.com/photo-1602330030064-9462208a044b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" onerror="this.onerror=null;this.src='https://placehold.co/150x150/ffffff/000000?text=Sandal+7';" alt="Sandal 7"></div>
+                <div class="grid-item"><img src="https://images.unsplash.com/photo-1602330030064-9462208a044b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" onerror="this.onerror=null;this.src='https://placehold.co/150x150/ffffff/000000?text=Sandal+8';" alt="Sandal 8"></div>
+                <div class="grid-item"><img src="https://images.unsplash.com/photo-1602330030064-9462208a044b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" onerror="this.onerror=null;this.src='https://placehold.co/150x150/ffffff/000000?text=Sandal+9';" alt="Sandal 9"></div>
+                <div class="grid-item"><img src="https://images.unsplash.com/photo-1602330030064-9462208a044b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" onerror="this.onerror=null;this.src='https://placehold.co/150x150/ffffff/000000?text=Sandal+10';" alt="Sandal 10"></div>
+                <div class="grid-item"><img src="https://images.unsplash.com/photo-1602330030064-9462208a044b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" onerror="this.onerror=null;this.src='https://placehold.co/150x150/ffffff/000000?text=Sandal+11';" alt="Sandal 11"></div>
+                <div class="grid-item"><img src="https://images.unsplash.com/photo-1602330030064-9462208a044b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" onerror="this.onerror=null;this.src='https://placehold.co/150x150/ffffff/000000?text=Sandal+12';" alt="Sandal 12"></div>
+            </div>
+        </div>
+
+        <!-- Dress Shoes Page -->
+        <div id="dress-shoes-page" class="page hidden">
+            <button class="back-button" onclick="showPage('shoes-explore-page')">&#8592;</button>
+            <h2 class="text-2xl font-bold mb-6">Dress Shoes</h2>
+            <div class="shoes-gallery-grid">
+                <!-- Real images for Dress Shoes -->
+                <div class="grid-item"><img src="https://images.unsplash.com/photo-1543163521-1bf539c55dd2?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" onerror="this.onerror=null;this.src='https://placehold.co/150x150/ffffff/000000?text=Dress+Shoe+1';" alt="Dress Shoe 1"></div>
+                <div class="grid-item"><img src="https://images.unsplash.com/photo-1543163521-1bf539c55dd2?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" onerror="this.onerror=null;this.src='https://placehold.co/150x150/ffffff/000000?text=Dress+Shoe+2';" alt="Dress Shoe 2"></div>
+                <div class="grid-item"><img src="https://images.unsplash.com/photo-1543163521-1bf539c55dd2?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" onerror="this.onerror=null;this.src='https://placehold.co/150x150/ffffff/000000?text=Dress+Shoe+3';" alt="Dress Shoe 3"></div>
+                <div class="grid-item"><img src="https://images.unsplash.com/photo-1543163521-1bf539c55dd2?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" onerror="this.onerror=null;this.src='https://placehold.co/150x150/ffffff/000000?text=Dress+Shoe+4';" alt="Dress Shoe 4"></div>
+                <div class="grid-item"><img src="https://images.unsplash.com/photo-1543163521-1bf539c55dd2?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" onerror="this.onerror=null;this.src='https://placehold.co/150x150/ffffff/000000?text=Dress+Shoe+5';" alt="Dress Shoe 5"></div>
+                <div class="grid-item"><img src="https://images.unsplash.com/photo-1543163521-1bf539c55dd2?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" onerror="this.onerror=null;this.src='https://placehold.co/150x150/ffffff/000000?text=Dress+Shoe+6';" alt="Dress Shoe 6"></div>
+                <div class="grid-item"><img src="https://images.unsplash.com/photo-1543163521-1bf539c55dd2?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" onerror="this.onerror=null;this.src='https://placehold.co/150x150/ffffff/000000?text=Dress+Shoe+7';" alt="Dress Shoe 7"></div>
+                <div class="grid-item"><img src="https://images.unsplash.com/photo-1543163521-1bf539c55dd2?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" onerror="this.onerror=null;this.src='https://placehold.co/150x150/ffffff/000000?text=Dress+Shoe+8';" alt="Dress Shoe 8"></div>
+                <div class="grid-item"><img src="https://images.unsplash.com/photo-1543163521-1bf539c55dd2?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" onerror="this.onerror=null;this.src='https://placehold.co/150x150/ffffff/000000?text=Dress+Shoe+9';" alt="Dress Shoe 9"></div>
+                <div class="grid-item"><img src="https://images.unsplash.com/photo-1543163521-1bf539c55dd2?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" onerror="this.onerror=null;this.src='https://placehold.co/150x150/ffffff/000000?text=Dress+Shoe+10';" alt="Dress Shoe 10"></div>
+                <div class="grid-item"><img src="https://images.unsplash.com/photo-1543163521-1bf539c55dd2?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" onerror="this.onerror=null;this.src='https://placehold.co/150x150/ffffff/000000?text=Dress+Shoe+11';" alt="Dress Shoe 11"></div>
+                <div class="grid-item"><img src="https://images.unsplash.com/photo-1543163521-1bf539c55dd2?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" onerror="this.onerror=null;this.src='https://placehold.co/150x150/ffffff/000000?text=Dress+Shoe+12';" alt="Dress Shoe 12"></div>
+            </div>
+        </div>
+
+        <!-- Styles Page -->
+        <div id="styles-page" class="page hidden">
+            <button class="back-button" onclick="showPage('home-page')">&#8592;</button>
+            <h2 class="text-2xl font-bold mb-6">Customize Your Style</h2>
+            <div class="style-grid">
+                <div class="grid-item">
+                    <img src="https://placehold.co/150x150/ffffff/000000?text=Your+Style" alt="Your Style">
+                    <span>your style</span>
+                </div>
+                <div class="grid-item">
+                    <img src="https://placehold.co/150x150/ffffff/000000?text=Street+Style" alt="Street Style">
+                    <span>street style</span>
+                </div>
+                <div class="grid-item">
+                    <img src="https://placehold.co/150x150/ffffff/000000?text=Iconic+Style" alt="Iconic Style">
+                    <span>iconic style</span>
+                </div>
+                <div class="grid-item">
+                    <img src="https://placehold.co/150x150/ffffff/000000?text=Calm+Style" alt="Calm Style">
+                    <span>calm style</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Message Box for alerts -->
+    <div id="message-box" class="message-box">
+        <p id="message-text"></p>
+        <button onclick="hideMessageBox()">OK</button>
+    </div>
+
+    <script>
+        // Function to show a specific page and hide others
+        function showPage(pageId) {
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(page => {
+                if (page.id === pageId) {
+                    page.classList.remove('hidden');
+                    page.classList.add('active');
+                } else {
+                    page.classList.remove('active');
+                    page.classList.add('hidden');
+                }
+            });
+        }
+
+        // Function to display a custom message box instead of alert()
+        function showMessageBox(message) {
+            document.getElementById('message-text').innerText = message;
+            document.getElementById('message-box').style.display = 'block';
+        }
+
+        // Function to hide the custom message box
+        function hideMessageBox() {
+            document.getElementById('message-box').style.display = 'none';
+        }
+
+        // Login function (simplified for demonstration)
+        function login() {
+            const email = document.getElementById('email-login').value;
+            const password = document.getElementById('password-login').value;
+
+            if (email === 'user@example.com' && password === 'password') {
+                showMessageBox('Login successful! Redirecting to Home.');
+                setTimeout(() => {
+                    hideMessageBox();
+                    showPage('home-page');
+                }, 1000); // Simulate a delay for redirection
+            } else {
+                showMessageBox('Invalid email or password. Please try again.');
+            }
+        }
+
+        // Search function (simplified for demonstration)
+        function performSearch() {
+            const searchTerm = document.getElementById('search-input').value;
+            if (searchTerm.trim() !== '') {
+                showMessageBox(`Searching for: "${searchTerm}"... (This is a demo search)`);
+            } else {
+                showMessageBox('Please enter a search term.');
+            }
+        }
+
+        // Function for shoes search
+        function performShoesSearch() {
+            const searchTerm = document.getElementById('shoes-search-input').value;
+            if (searchTerm.trim() !== '') {
+                showMessageBox(`Searching for shoes: "${searchTerm}"... (This is a demo search)`);
+            } else {
+                showMessageBox('Please enter a shoe search term.');
+            }
+        }
+
+        // Initialize the app by showing the login page
+        document.addEventListener('DOMContentLoaded', () => {
+            showPage('login-page');
+        });
+    </script>
+</body>
+</html>
