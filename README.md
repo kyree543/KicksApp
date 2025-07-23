@@ -23,7 +23,9 @@ Here's a walkthrough of implemented features:
 
 ## Notes and Comments
 
-Describe any challenges encountered while building this project.
+Describe any challenges. a couple challenges i had was getting gemeni to put seperate pictures in the categorys of the shoes and clothes i had to constantly keep telling it where it had to be and what type of pictures had to be there.
+another challenge was making the app it was kind of hard at first but i got the hang of it  and created a good looking app so far.
+
 
 
 
